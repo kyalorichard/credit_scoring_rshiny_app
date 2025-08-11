@@ -1,0 +1,17 @@
+Package: creditScoringShinyApp
+Type: Shiny
+Title: Credit Scoring Dashboard
+Version: 0.1.0
+Author: Richard Kyalo
+Description: An interactive R Shiny dashboard for credit scoring with model selection and dataset upload functionality.
+Depends: R (>= 4.0)
+Imports:
+    shiny,
+    shinyWidgets,
+    tidyverse,
+    DT,
+    randomForest,
+    xgboost,
+    lightgbm,
+    tidymodels
+Encoding: UTF-8
