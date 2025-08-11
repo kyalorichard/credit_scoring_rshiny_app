@@ -1,0 +1,33 @@
+name: Deploy Shiny App
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.2.2'
+
+      - name: Install system deps
+        run: sudo apt-get update && sudo apt-get install -y libssl-dev libcurl4-openssl-dev libxml2-dev
+
+      - name: Install R packages
+        run: |
+          Rscript -e 'install.packages(c("shiny","shinyWidgets","DT","tidyverse","recipes","parsnip","workflows","rsample","yardstick","ranger","xgboost","glmnet","digest","pROC","rsconnect"))'
+
+      - name: Deploy to shinyapps.io
+        env:
+          SHINYAPPS_NAME: ${{ secrets.SHINYAPPS_NAME }}
+          SHINYAPPS_TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
+          SHINYAPPS_SECRET: ${{ secrets.SHINYAPPS_SECRET }}
+        run: |
+          Rscript -e "rsconnect::setAccountInfo(name=Sys.getenv('SHINYAPPS_NAME'), token=Sys.getenv('SHINYAPPS_TOKEN'), secret=Sys.getenv('SHINYAPPS_SECRET'))"
+          Rscript -e "rsconnect::deployApp(appDir='.', appName='credit-scoring-dashboard')"
